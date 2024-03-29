@@ -6,6 +6,17 @@ const {
   getIfReportMeeting,
 } = require("./utils");
 
+/*
+ *                     METHODOLOGIE
+ * 1. Je formatte correctement ma data
+ * 2. J'enleve les data ou je peux pas poser de nouvelle reunion
+ * 3. Je vais trouver l'horaire de la nouvelle reunion
+ * 4. Je vais faire tout les checks nécessaires
+ * 4.1 Si probleme je decale ou si pas possible de decaler je reviens et l'étape 2 pour refaire le parcour, jusqu'a ce que je trouve (récursivité)
+ * 5. Je retourne l'horaire de la nouvelle reunion / ou "Aucun horaire de réunion disponible" si je n'ai trouvé aucun créneau
+ *
+ */
+
 const IMPOSSIBLE = "Aucun horaire de réunion disponible.";
 
 const findMeetingRecursive = ({
@@ -36,7 +47,7 @@ const findMeetingRecursive = ({
    * 3 états pour reschedulingMeeting:
    * - error: ==> l'on ne peut pas poser de reunion le jour J on rappelle la fonction avec un nouveau trie de tableau
    * - null: ==> tout est OK, on ne trouve pas de réunion surprise entre hh:mm et hh:mm + meetingDuration
-   * - { dayOfWeek: 'x', start: xxx, end: xxx, firstSlot: xxx }: ==> on a trouver une nouvelle date, car on réunion c'était glissé entre hh:mm et hh:mm + meetingDuration
+   * - { dayOfWeek: 'x', startMeeting: xxx, endMeeting: xxx, firstSlot: xxx }: ==> on a trouver une nouvelle date, car on réunion c'était glissé entre hh:mm et hh:mm + meetingDuration
    *
    */
 
