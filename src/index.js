@@ -104,7 +104,7 @@ const findMeetingTime = ({
       }
       return acc;
     },
-    []
+    [],
   );
 
   // c'est la ou est le coeur du réacteur

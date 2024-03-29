@@ -7,6 +7,8 @@ const parseFileToTable = (filename) => {
   return lines;
 };
 
+// J'ai pas utilisé de Mock pour les tests unitaires mais j'aurais pu.
+
 describe("../src/index", () => {
   describe("Test unitaires pour la fonction findMeetingTime", () => {
     // Trois (voir plus) manière de tester la fonction avec les fichier fournis
@@ -28,7 +30,7 @@ describe("../src/index", () => {
       expect(
         findMeetingTime({
           dataInput: parseFileToTable(`./data/input${input}.txt`),
-        })
+        }),
       ).toBe(parseFileToTable(`./data/output${output}.txt`).toString());
     });
 
@@ -38,7 +40,7 @@ describe("../src/index", () => {
       test(`Test forEach avec input${nb}.text`, () => {
         const dataInput = parseFileToTable(`./data/input${nb}.txt`);
         const expectedOutput = parseFileToTable(
-          `./data/output${nb}.txt`
+          `./data/output${nb}.txt`,
         ).toString();
         expect(findMeetingTime({ dataInput })).toBe(expectedOutput);
       });
@@ -53,7 +55,7 @@ describe("../src/index", () => {
         "5 08:00-17:59",
       ];
       expect(findMeetingTime({ dataInput: schedules })).toBe(
-        "Aucun horaire de réunion disponible."
+        "Aucun horaire de réunion disponible.",
       );
     });
 
@@ -67,21 +69,21 @@ describe("../src/index", () => {
         "2 08:00-08:30",
       ];
       expect(findMeetingTime({ dataInput: schedules, hoursEnd: "16:00" })).toBe(
-        "2 09:00-09:59"
+        "2 09:00-09:59",
       );
     });
 
     it("Test avec reunion qui se chevauche (verif 1)", () => {
       const schedules = ["1 08:30-09:29", "1 09:00-09:59", "1 09:40-10:09"];
       expect(findMeetingTime({ dataInput: schedules, hoursEnd: "16:00" })).toBe(
-        "1 10:10-11:09"
+        "1 10:10-11:09",
       );
     });
 
     it("Test avec reunion qui se chevauche (verif 2)", () => {
       const schedules = ["1 10:00-10:59", "1 08:00-09:59"];
       expect(findMeetingTime({ dataInput: schedules, hoursEnd: "16:00" })).toBe(
-        "1 11:00-11:59"
+        "1 11:00-11:59",
       );
     });
 
@@ -96,13 +98,13 @@ describe("../src/index", () => {
         "2 08:00-15:59",
       ];
       expect(findMeetingTime({ dataInput: schedules, hoursEnd: "16:00" })).toBe(
-        "Aucun horaire de réunion disponible."
+        "Aucun horaire de réunion disponible.",
       );
     });
 
     it("Test avec tableau vide", () => {
       expect(findMeetingTime({ hoursEnd: "16:00" })).toBe(
-        "Aucun horaire de réunion disponible."
+        "Aucun horaire de réunion disponible.",
       );
     });
   });
@@ -117,12 +119,8 @@ describe("../src/index", () => {
         "3 08:40-10:12",
       ];
       expect(findMeetingTime({ dataInput: schedules })).toMatch(
-        /^\d+ \d\d:\d\d-\d\d:\d\d$/
+        /^\d+ \d\d:\d\d-\d\d:\d\d$/,
       );
     });
-  });
-
-  describe("Test unitaires pour la fonction findMeetingRecursive", () => {
-    const mockFilterAndSortResult = jest.fn();
   });
 });

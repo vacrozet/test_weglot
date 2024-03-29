@@ -44,7 +44,7 @@ describe("../src/utils.js", () => {
           meetingDuration: 60,
           startMeeting: 720,
           endMeeting: 1000,
-        })
+        }),
       ).toBe(0);
     });
 
@@ -56,7 +56,7 @@ describe("../src/utils.js", () => {
           meetingDuration: 60,
           startMeeting: 200,
           endMeeting: 800,
-        })
+        }),
       ).toBe(null);
     });
 
@@ -68,7 +68,7 @@ describe("../src/utils.js", () => {
           meetingDuration: 10,
           startMeeting: 702,
           endMeeting: 749,
-        })
+        }),
       ).toBe(750);
     });
   });
@@ -89,7 +89,7 @@ describe("../src/utils.js", () => {
         { dayOfWeek: 5, firstSlot: 2 },
       ];
       expect(filterAndSortResult({ days, daysOverBooking })).toEqual(
-        expectedResult
+        expectedResult,
       );
     });
 
@@ -113,7 +113,7 @@ describe("../src/utils.js", () => {
         { dayOfWeek: 5, firstSlot: 2 },
       ];
       expect(filterAndSortResult({ days, daysOverBooking })).toEqual(
-        expectedResult
+        expectedResult,
       );
     });
 
@@ -139,7 +139,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toBe(null);
     });
 
@@ -168,7 +168,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 60,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         startMeeting: 580,
@@ -208,7 +208,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 60,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         startMeeting: 581,
@@ -248,7 +248,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 60,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         startMeeting: 580,
@@ -282,7 +282,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 60,
           workingHoursEnd: 630,
-        })
+        }),
       ).toEqual("error");
     });
 
@@ -302,7 +302,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         startMeeting: 28,
@@ -327,7 +327,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 1000,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         endMeeting: 28,
@@ -352,7 +352,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 35,
-        })
+        }),
       ).toEqual("error");
     });
 
@@ -373,7 +373,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         startMeeting: 28,
@@ -399,7 +399,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 1079,
-        })
+        }),
       ).toEqual({
         dayOfWeek: 1,
         startMeeting: 29,
@@ -424,7 +424,7 @@ describe("../src/utils.js", () => {
           ],
           meetingDuration: 10,
           workingHoursEnd: 38,
-        })
+        }),
       ).toEqual("error");
     });
   });
