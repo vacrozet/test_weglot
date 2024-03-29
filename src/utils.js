@@ -1,11 +1,11 @@
 // Fonction pour convertir l'heure en minutes
-const toMinutes = (time) => {
+const toMinutes = ({ time }) => {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
 };
 
 // Fonction pour convertir des minutes depuis minuit en horaire (hh:mm)
-const toTime = (minutes) => {
+const toTime = ({ minutes }) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return `${hours.toString().padStart(2, "0")}:${mins
@@ -22,7 +22,7 @@ const getFirstSlot = ({
   endMeeting,
 }) => {
   /*
-   * Si startDy + le temps de la réunion sont en dessous ou egal au debut de la reunion deja posé
+   * Si startDay + le temps de la réunion sont en dessous ou egal au debut de la reunion deja posé
    * On déterminer que le premier slot disponible du temps de la réunion est celui-ci
    */
   if (startDay + meetingDuration <= startMeeting) {
@@ -68,8 +68,17 @@ const filterAndSortResult = ({ days = [], daysOverBooking = [] }) => {
  * - Mais rien n'empeche d'avoir une réunion au dessus du firstSlot de celui qui est le plus occupé
  * Du coup:
  * - On regarde si le firstSlot (+ le temps) de celui qui est le plus occupé:
- * --> N'englobe pas un slot voisin (verif 1)
- * --> Ne chevauche pas un slot voisin (verif 2)
+ * --> (verif 1) Ne chevauche pas un slot voisin (commencant avant le Fs et finissant entre le Fs et le Fs + meetingDuration)
+ * --> (verif 2) N'englobe pas un slot voisin (commencant apres le Fs et finissant entre le Fs et le Fs + meetingDuration)
+ * --> (verif 3) Ne chevauche pas un slot voisin (commencant apres le Fs et finissant apres le Fs + meetingDuration)
+ */
+
+/*
+ *        verif 1              verif 2              verif 3
+ *   |-----------------|  |-----------------|  |-----------------|
+ *           Fs                                 Fs + meetingDuration
+ *           |------------------------------------------|
+ *
  */
 const getIfReportMeeting = ({
   dayD,
@@ -77,26 +86,24 @@ const getIfReportMeeting = ({
   meetingDuration,
   workingHoursEnd,
 }) => {
-  // console.log({ dayD, days });
   return days.reduce((acc, day) => {
     if (acc !== "error") {
-      // N'englobe pas un slot voisin (verif 1)
+      // Ne chevauche pas un slot voisin (commencant avant le FS et finissant entre le Fs et le Fs + meetingDuration) (verif 1)
       if (
-        dayD.firstSlot <= day.startMeeting &&
+        dayD.firstSlot > day.startMeeting &&
+        dayD.firstSlot <= day.endMeeting &&
         dayD.firstSlot + meetingDuration >= day.endMeeting
       ) {
-        // console.log("je passe la");
+        /*
+         * On verifie si la fin de la reunion du slot voisin
+         * + le temps de la futur reunion est superieur à la fin de la journee
+         * Si c'est le cas, on ne peut pas poser de reunion ==> Erreur
+         */
         if (day.endMeeting + meetingDuration > workingHoursEnd) {
-          // Je met acc a "error" pour la suite
           acc = "error";
         } else {
           // Si il englobe un slot voisin, on prend la fin de la reunion du slot voisin (+ 1 minutes)
           if (!acc) {
-            /*
-             * On verifie si la fin de la reunion du slot voisin
-             * + le temps de la futur reunion est superieur à la fin de la journee
-             * Si c'est le cas, on ne peut pas poser de reunion ==> Erreur
-             */
             acc = { ...day, firstSlot: day.endMeeting + 1 };
           } else if (day.endMeeting >= acc.firstSlot) {
             acc = { ...day, firstSlot: day.endMeeting + 1 };
@@ -105,14 +112,41 @@ const getIfReportMeeting = ({
         return acc;
       }
 
-      // Ne chevauche pas un slot voisin (verif 2)
+      // N'englobe pas un slot voisin (commencant apres le FS et finissant entre le Fs et le Fs + meetingDuration) (verif 2)
       if (
-        dayD.firstSlot < day.startMeeting &&
+        dayD.firstSlot <= day.startMeeting &&
+        dayD.firstSlot + meetingDuration >= day.endMeeting
+      ) {
+        /*
+         * On verifie si la fin de la reunion du slot voisin
+         * + le temps de la futur reunion est superieur à la fin de la journee
+         * Si c'est le cas, on ne peut pas poser de reunion ==> Erreur
+         */
+        if (day.endMeeting + meetingDuration > workingHoursEnd) {
+          acc = "error";
+        } else {
+          // Si il englobe un slot voisin, on prend la fin de la reunion du slot voisin (+ 1 minutes)
+          if (!acc) {
+            acc = { ...day, firstSlot: day.endMeeting + 1 };
+          } else if (day.endMeeting >= acc.firstSlot) {
+            acc = { ...day, firstSlot: day.endMeeting + 1 };
+          }
+        }
+        return acc;
+      }
+
+      // Ne chevauche pas un slot voisin (commencant apres le FS et finissant apres le Fs + meetingDuration) (verif 3)
+      if (
+        dayD.firstSlot <= day.startMeeting &&
         dayD.firstSlot + meetingDuration > day.startMeeting &&
         dayD.firstSlot + meetingDuration < day.endMeeting
       ) {
+        /*
+         * On verifie si la fin de la reunion du slot voisin
+         * + le temps de la futur reunion est superieur à la fin de la journee
+         * Si c'est le cas, on ne peut pas poser de reunion ==> Erreur
+         */
         if (day.endMeeting + meetingDuration > workingHoursEnd) {
-          // Je met acc a "error" pour la suite
           acc = "error";
         } else {
           if (!acc) {

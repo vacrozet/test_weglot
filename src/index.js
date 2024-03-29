@@ -62,13 +62,19 @@ const findMeetingTime = ({
   hoursEnd = "17:59",
   duration = 60,
 }) => {
-  const startDay = toMinutes(hoursStart);
-  const endDay = toMinutes(hoursEnd);
+  const startDay = toMinutes({ time: hoursStart });
+  const endDay = toMinutes({ time: hoursEnd });
   const meetingDuration = duration; // Durée de la réunion en minutes
+
+  if (!Array.isArray(dataInput) || !dataInput.length > 0) {
+    return IMPOSSIBLE;
+  }
 
   const formattedDays = dataInput.map((line) => {
     const [dayOfWeek, range] = line.split(" ");
-    const [startMeeting, endMeeting] = range.split("-").map(toMinutes);
+    const [startMeeting, endMeeting] = range
+      .split("-")
+      .map((time) => toMinutes({ time }));
     // Trouver le premier slot disponible
     const firstSlot = getFirstSlot({
       startDay,
@@ -102,25 +108,22 @@ const findMeetingTime = ({
   );
 
   // c'est la ou est le coeur du réacteur
-  if (formattedDays.length > 0) {
-    const rescheduling = findMeetingRecursive({
-      days: formattedDays,
-      workingHoursEnd: endDay,
-      meetingDuration,
-      daysOverBooking,
-    });
+  const rescheduling = findMeetingRecursive({
+    days: formattedDays,
+    workingHoursEnd: endDay,
+    meetingDuration,
+    daysOverBooking,
+  });
 
-    if (rescheduling === IMPOSSIBLE) {
-      return IMPOSSIBLE;
-    }
-
-    return `${rescheduling.dayOfWeek} ${toTime(
-      rescheduling.firstSlot
-    )}-${toTime(rescheduling.firstSlot + meetingDuration - 1)}`;
+  if (rescheduling === IMPOSSIBLE) {
+    return IMPOSSIBLE;
   }
+
+  return `${rescheduling.dayOfWeek} ${toTime({
+    minutes: rescheduling.firstSlot,
+  })}-${toTime({ minutes: rescheduling.firstSlot + meetingDuration - 1 })}`;
 };
 
 module.exports = {
   findMeetingTime,
-  findMeetingRecursive,
 };
