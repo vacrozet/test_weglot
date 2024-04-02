@@ -107,7 +107,6 @@ const findMeetingTime = ({
    * Cela voudra dire que je ne peux pas poser de meeting ce jour là,
    * Je crée donc un tableau avec les jours ou j'ai un firstSlot à null
    */
-  // Je ne met pas cette fonction dans la fonction recursive car on ne l'utilise qu'une seul fois
   const daysOverBooking = formattedDays.reduce(
     (acc, { dayOfWeek, firstSlot }) => {
       if (firstSlot === null && !acc.includes(dayOfWeek)) {
@@ -118,7 +117,7 @@ const findMeetingTime = ({
     [],
   );
 
-  // c'est la ou est le coeur du réacteur
+  // Fonction récursive pour trouver le premier slot disponible commun
   const rescheduling = findMeetingRecursive({
     days: formattedDays,
     workingHoursEnd: endDay,
